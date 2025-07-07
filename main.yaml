@@ -26,4 +26,24 @@
         type: dword
       
       
+- name: Disable SMBv1 via registry (all Windows versions)
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Disable SMBv1
+      win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters
+        name: SMB1
+        data: 0
+        type: dword
 
+  - name: Disable SMB 1.x MiniRedirector service
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Ensure SMB 1.x MiniRedirector service is disabled
+      ansible.windows.win_service:
+        name: mrxsmb10
+        start_mode: disabled
+        state: stopped
+      register: service_result
